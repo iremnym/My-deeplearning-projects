@@ -1,0 +1,683 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "992e64b8",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:50.011266Z",
+     "iopub.status.busy": "2025-03-10T18:06:50.010815Z",
+     "iopub.status.idle": "2025-03-10T18:06:50.898601Z",
+     "shell.execute_reply": "2025-03-10T18:06:50.897625Z"
+    },
+    "papermill": {
+     "duration": 0.89486,
+     "end_time": "2025-03-10T18:06:50.900346",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:50.005486",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "0fdd87e4",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:50.907216Z",
+     "iopub.status.busy": "2025-03-10T18:06:50.906744Z",
+     "iopub.status.idle": "2025-03-10T18:06:50.938930Z",
+     "shell.execute_reply": "2025-03-10T18:06:50.938060Z"
+    },
+    "papermill": {
+     "duration": 0.037153,
+     "end_time": "2025-03-10T18:06:50.940666",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:50.903513",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "data= pd.read_csv(\"/kaggle/input/titanic/train.csv\")\n",
+    "test= pd.read_csv(\"/kaggle/input/titanic/test.csv\")\n",
+    "test_ids=test[\"PassengerId\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "aa51e8b5",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:50.946858Z",
+     "iopub.status.busy": "2025-03-10T18:06:50.946562Z",
+     "iopub.status.idle": "2025-03-10T18:06:50.964274Z",
+     "shell.execute_reply": "2025-03-10T18:06:50.963445Z"
+    },
+    "papermill": {
+     "duration": 0.022649,
+     "end_time": "2025-03-10T18:06:50.965926",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:50.943277",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "<ipython-input-3-b39538d41e14>:5: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\n",
+      "The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n",
+      "\n",
+      "For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n",
+      "\n",
+      "\n",
+      "  data[col].fillna(data[col].median(), inplace=True)\n",
+      "<ipython-input-3-b39538d41e14>:6: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\n",
+      "The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n",
+      "\n",
+      "For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n",
+      "\n",
+      "\n",
+      "  data.Embarked.fillna(\"u\",inplace=True)\n",
+      "<ipython-input-3-b39538d41e14>:5: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\n",
+      "The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n",
+      "\n",
+      "For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n",
+      "\n",
+      "\n",
+      "  data[col].fillna(data[col].median(), inplace=True)\n",
+      "<ipython-input-3-b39538d41e14>:6: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\n",
+      "The behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n",
+      "\n",
+      "For example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n",
+      "\n",
+      "\n",
+      "  data.Embarked.fillna(\"u\",inplace=True)\n"
+     ]
+    }
+   ],
+   "source": [
+    "def clean(data):\n",
+    "    data=data.drop([\"Ticket\",\"Cabin\",\"Name\",\"PassengerId\"],axis=1)\n",
+    "    cols=[\"SibSp\",\"Parch\",\"Fare\",\"Age\"]\n",
+    "    for col in cols:\n",
+    "        data[col].fillna(data[col].median(), inplace=True)\n",
+    "    data.Embarked.fillna(\"u\",inplace=True)\n",
+    "    return data\n",
+    "\n",
+    "data=clean(data)\n",
+    "test=clean(test)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "0583d5f1",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:50.972376Z",
+     "iopub.status.busy": "2025-03-10T18:06:50.972037Z",
+     "iopub.status.idle": "2025-03-10T18:06:50.994475Z",
+     "shell.execute_reply": "2025-03-10T18:06:50.993650Z"
+    },
+    "papermill": {
+     "duration": 0.027087,
+     "end_time": "2025-03-10T18:06:50.995825",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:50.968738",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Survived</th>\n",
+       "      <th>Pclass</th>\n",
+       "      <th>Sex</th>\n",
+       "      <th>Age</th>\n",
+       "      <th>SibSp</th>\n",
+       "      <th>Parch</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>Embarked</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>male</td>\n",
+       "      <td>22.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>7.2500</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>female</td>\n",
+       "      <td>38.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>71.2833</td>\n",
+       "      <td>C</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>female</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>7.9250</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>female</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>53.1000</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>male</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>8.0500</td>\n",
+       "      <td>S</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Survived  Pclass     Sex   Age  SibSp  Parch     Fare Embarked\n",
+       "0         0       3    male  22.0      1      0   7.2500        S\n",
+       "1         1       1  female  38.0      1      0  71.2833        C\n",
+       "2         1       3  female  26.0      0      0   7.9250        S\n",
+       "3         1       1  female  35.0      1      0  53.1000        S\n",
+       "4         0       3    male  35.0      0      0   8.0500        S"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "fbf71fdc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:51.002920Z",
+     "iopub.status.busy": "2025-03-10T18:06:51.002550Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.360429Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.359327Z"
+    },
+    "papermill": {
+     "duration": 1.363858,
+     "end_time": "2025-03-10T18:06:52.362468",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:50.998610",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['female' 'male']\n",
+      "['C' 'Q' 'S' 'u']\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Survived</th>\n",
+       "      <th>Pclass</th>\n",
+       "      <th>Sex</th>\n",
+       "      <th>Age</th>\n",
+       "      <th>SibSp</th>\n",
+       "      <th>Parch</th>\n",
+       "      <th>Fare</th>\n",
+       "      <th>Embarked</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>22.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>7.2500</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>38.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>71.2833</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>0</td>\n",
+       "      <td>26.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>7.9250</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>53.1000</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>35.0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>8.0500</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   Survived  Pclass  Sex   Age  SibSp  Parch     Fare  Embarked\n",
+       "0         0       3    1  22.0      1      0   7.2500         2\n",
+       "1         1       1    0  38.0      1      0  71.2833         0\n",
+       "2         1       3    0  26.0      0      0   7.9250         2\n",
+       "3         1       1    0  35.0      1      0  53.1000         2\n",
+       "4         0       3    1  35.0      0      0   8.0500         2"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn import preprocessing\n",
+    "le=preprocessing.LabelEncoder()\n",
+    "\n",
+    "cols=[\"Sex\",\"Embarked\"]\n",
+    "for col in cols:\n",
+    "    data[col]=le.fit_transform(data[col])\n",
+    "    test[col]=le.transform(test[col])\n",
+    "    print(le.classes_)\n",
+    "data.head(5)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b8e21fac",
+   "metadata": {
+    "papermill": {
+     "duration": 0.002538,
+     "end_time": "2025-03-10T18:06:52.368238",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.365700",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "203f2cfc",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.375124Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.374678Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.647705Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.646878Z"
+    },
+    "papermill": {
+     "duration": 0.278365,
+     "end_time": "2025-03-10T18:06:52.649331",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.370966",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from sklearn.linear_model import LogisticRegression\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "y=data[\"Survived\"]\n",
+    "X=data.drop(\"Survived\", axis=1)\n",
+    "\n",
+    "X_train, X_val, y_train, y_val=train_test_split(X,y,test_size=0.2,random_state=42)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "a2f95e2a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.656403Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.656007Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.696346Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.695132Z"
+    },
+    "papermill": {
+     "duration": 0.045673,
+     "end_time": "2025-03-10T18:06:52.698043",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.652370",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "clf=LogisticRegression(random_state=0, max_iter=1000).fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "6f0b3696",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.704902Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.704609Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.711973Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.711241Z"
+    },
+    "papermill": {
+     "duration": 0.01256,
+     "end_time": "2025-03-10T18:06:52.713689",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.701129",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.8100558659217877"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "predictions=clf.predict(X_val)\n",
+    "from sklearn.metrics import accuracy_score\n",
+    "accuracy_score(y_val,predictions)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "f7e48f00",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.720766Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.720454Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.725944Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.725063Z"
+    },
+    "papermill": {
+     "duration": 0.010411,
+     "end_time": "2025-03-10T18:06:52.727244",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.716833",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "submission_preds= clf. predict (test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "8e487e3a",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.734156Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.733866Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.738317Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.737420Z"
+    },
+    "papermill": {
+     "duration": 0.009987,
+     "end_time": "2025-03-10T18:06:52.740424",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.730437",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "df=pd.DataFrame({\"PassengerId\":test_ids.values,\n",
+    "                 \"Survived\":submission_preds,\n",
+    "                })"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "e9244394",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.747731Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.747382Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.756858Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.755728Z"
+    },
+    "papermill": {
+     "duration": 0.014949,
+     "end_time": "2025-03-10T18:06:52.758670",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.743721",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "df.to_csv(\"submission.csv\", index=False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "a90066bb",
+   "metadata": {
+    "execution": {
+     "iopub.execute_input": "2025-03-10T18:06:52.765748Z",
+     "iopub.status.busy": "2025-03-10T18:06:52.765449Z",
+     "iopub.status.idle": "2025-03-10T18:06:52.772636Z",
+     "shell.execute_reply": "2025-03-10T18:06:52.771893Z"
+    },
+    "papermill": {
+     "duration": 0.012155,
+     "end_time": "2025-03-10T18:06:52.773978",
+     "exception": false,
+     "start_time": "2025-03-10T18:06:52.761823",
+     "status": "completed"
+    },
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     PassengerId  Survived\n",
+      "0            892         0\n",
+      "1            893         0\n",
+      "2            894         0\n",
+      "3            895         0\n",
+      "4            896         1\n",
+      "..           ...       ...\n",
+      "413         1305         0\n",
+      "414         1306         1\n",
+      "415         1307         0\n",
+      "416         1308         0\n",
+      "417         1309         0\n",
+      "\n",
+      "[418 rows x 2 columns]\n"
+     ]
+    }
+   ],
+   "source": [
+    "df = pd.read_csv(\"submission.csv\")\n",
+    "print(df)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kaggle": {
+   "accelerator": "none",
+   "dataSources": [
+    {
+     "databundleVersionId": 26502,
+     "sourceId": 3136,
+     "sourceType": "competition"
+    }
+   ],
+   "dockerImageVersionId": 30918,
+   "isGpuEnabled": false,
+   "isInternetEnabled": true,
+   "language": "python",
+   "sourceType": "notebook"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.12"
+  },
+  "papermill": {
+   "default_parameters": {},
+   "duration": 5.791052,
+   "end_time": "2025-03-10T18:06:53.497818",
+   "environment_variables": {},
+   "exception": null,
+   "input_path": "__notebook__.ipynb",
+   "output_path": "__notebook__.ipynb",
+   "parameters": {},
+   "start_time": "2025-03-10T18:06:47.706766",
+   "version": "2.6.0"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
